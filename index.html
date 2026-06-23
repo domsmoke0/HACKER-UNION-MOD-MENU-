@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HACKER UNION Mod Menu</title>
+
+<style>
+body {
+    margin: 0;
+    background: #050a2a;
+    font-family: Arial;
+    color: white;
+}
+
+/* LOADING SCREEN */
+#loading {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 999;
+}
+
+.loader {
+    width: 200px;
+    height: 10px;
+    background: #111;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.bar {
+    width: 0%;
+    height: 100%;
+    background: lime;
+    animation: load 3s linear forwards;
+}
+
+@keyframes load {
+    to { width: 100%; }
+}
+
+/* LOGIN */
+#login {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #000428;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+input, button {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
+button {
+    background: blue;
+    color: white;
+}
+
+/* MOD MENU */
+#modMenu {
+    position: fixed;
+    top: 100px;
+    left: 40px;
+    width: 270px;
+    background: linear-gradient(180deg, #001aff, #000a66);
+    border-radius: 10px;
+    display: none;
+    box-shadow: 0 0 15px #00f;
+    animation: neon 2s infinite alternate;
+}
+
+/* NEON EFFECT */
+@keyframes neon {
+    from { box-shadow: 0 0 10px #00f; }
+    to { box-shadow: 0 0 25px #00f, 0 0 40px #00f; }
+}
+
+.header {
+    padding: 10px;
+    background: #0013a0;
+    text-align: center;
+    cursor: grab;
+    font-weight: bold;
+}
+
+.content {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.feature {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+}
+
+.switch {
+    width: 30px;
+    height: 15px;
+    background: red;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.switch.active {
+    background: lime;
+}
+
+/* SLIDER */
+.slider {
+    width: 100%;
+}
+
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+.btn {
+    width: 45%;
+    text-align: center;
+    background: #0013a0;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* FLOATING BUTTON */
+#floatBtn {
+    position: fixed;
+    width: 60px;
+    height: 60px;
+    background: #002aff;
+    border-radius: 50%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    bottom: 100px;
+    left: 20px;
+    cursor: grab;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+    <h2>Injecting BRATTXY...</h2>
+    <div class="loader"><div class="bar"></div></div>
+</div>
+
+<!-- LOGIN -->
+<div id="login">
+    <h2>ENTER PASSWORD</h2>
+    <input type="password" id="pass">
+    <button onclick="login()">ENTER</button>
+</div>
+
+<!-- MOD MENU -->
+<div id="modMenu">
+    <div class="header" id="dragHeader">BRATTXY</div>
+
+    <div class="content">
+        <div class="feature">Fly <div class="switch"></div></div>
+        <div class="feature">Killaura <div class="switch"></div></div>
+        <div class="feature">Aimbot <div class="switch"></div></div>
+
+        <p>Aim Range</p>
+        <input type="range" class="slider" min="0" max="100">
+
+        <p>Speed</p>
+        <input type="range" class="slider" min="0" max="100">
+
+        <div class="feature">ESP <div class="switch"></div></div>
+        <div class="feature">No Recoil <div class="switch"></div></div>
+        <div class="feature">God Mode <div class="switch"></div></div>
+    </div>
+
+    <div class="bottom">
+        <div class="btn">[ - ]</div>
+        <div class="btn" onclick="closeMenu()">[ + ]</div>
+    </div>
+</div>
+
+<!-- FLOAT BUTTON -->
+<div id="floatBtn">Brat</div>
+
+<script>
+// LOADING → LOGIN
+setTimeout(() => {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("login").style.display = "flex";
+}, 3000);
+
+// LOGIN
+function login() {
+    if (document.getElementById("pass").value === "OFFOFF") {
+        document.getElementById("login").style.display = "none";
+        document.getElementById("modMenu").style.display = "block";
+    } else {
+        alert("Wrong password!");
+    }
+}
+
+// TOGGLES
+document.querySelectorAll('.switch').forEach(s => {
+    s.onclick = () => s.classList.toggle('active');
+});
+
+// CLOSE MENU
+function closeMenu() {
+    modMenu.style.display = "none";
+    floatBtn.style.display = "flex";
+}
+
+// OPEN MENU
+floatBtn.onclick = () => {
+    modMenu.style.display = "block";
+    floatBtn.style.display = "none";
+};
+
+// DRAG MENU
+let menu = document.getElementById("modMenu");
+let header = document.getElementById("dragHeader");
+let dragging = false, offsetX, offsetY;
+
+header.addEventListener("mousedown", startDrag);
+document.addEventListener("mousemove", drag);
+document.addEventListener("mouseup", () => dragging=false);
+
+header.addEventListener("touchstart", e => {
+    dragging = true;
+    let t = e.touches[0];
+    offsetX = t.clientX - menu.offsetLeft;
+    offsetY = t.clientY - menu.offsetTop;
+});
+
+document.addEventListener("touchmove", e => {
+    if (!dragging) return;
+    let t = e.touches[0];
+    menu.style.left = (t.clientX - offsetX) + "px";
+    menu.style.top = (t.clientY - offsetY) + "px";
+});
+
+function startDrag(e) {
+    dragging = true;
+    offsetX = e.clientX - menu.offsetLeft;
+    offsetY = e.clientY - menu.offsetTop;
+}
+
+function drag(e) {
+    if (!dragging) return;
+    menu.style.left = (e.clientX - offsetX) + "px";
+    menu.style.top = (e.clientY - offsetY) + "px";
+}
+
+// DRAG FLOAT BUTTON
+let floatBtn = document.getElementById("floatBtn");
+let dragF = false;
+
+floatBtn.addEventListener("touchstart", e => {
+    dragF = true;
+});
+
+document.addEventListener("touchmove", e => {
+    if (!dragF) return;
+    let t = e.touches[0];
+    floatBtn.style.left = t.clientX + "px";
+    floatBtn.style.top = t.clientY + "px";
+});
+
+document.addEventListener("touchend", () => dragF = false);
+</script>
+
+</body>
+  </html>
